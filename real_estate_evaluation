@@ -1,0 +1,37 @@
+# make a decision tree regression model used to predict the house_price_of_unit_area 
+import pandas as pd
+from sklearn.tree import DecisionTreeRegressor
+#import these for now. pandas is used for handling data
+
+real_estate = pd.read_excel('REV.xlsx',names=None)
+real_estate.head()
+# this is done to read a data for features and target variable and the next line popps up the table
+
+cleanRE = real_estate.dropna(axis=0)
+#drop rows that has missing values
+
+Y = cleanRE.house_price_of_unit_area
+features = ['house_age','distance_to_the_nearest_MRT_station','number_of_convenience_stores','latitude','longitude']
+X = cleanRE[features]
+
+ml_model = DecisionTreeRegressor()
+ml_model.fit(X,Y)
+# fits with both x and y variables finds patterns
+
+prediction = ml_model.predict(X)
+print("actual values of y",Y.values[:5])
+print("predicted values of y",prediction[:5])
+# see difference between prediction and target
+
+from sklearn.metrics import mean_absolute_error
+ml_prediction = ml_model.predict(X)
+mean_absolute_error(Y,ml_prediction)
+#find out how far off the prediction is
+
+from sklearn.model_selection import train_test_split
+train_X,val_X,train_Y,val_Y = train_test_split(X,Y,random_state=0)
+ml_prediction = ml_model.predict(val_X)
+print(mean_absolute_error(val_Y,ml_prediction))
+print("prediction in val_data:",ml_prediction[:5])
+print("actual answer:", val_Y.values[:5])
+# split data for training and evaluation
